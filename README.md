@@ -196,27 +196,8 @@ npm run lint:fix         # Fix ESLint issues
 
 - `GET /health` - Health check endpoint
 
-## 📋 Environment Variables
 
-Required environment variables (see `.env.example`):
 
-```env
-# Database
-DATABASE_URL=postgresql://username:password@localhost:5432/fitness_app
-
-# Cloudflare R2 (for meal photo storage)
-CLOUDFLARE_R2_ENDPOINT=https://your-account-id.r2.cloudflarestorage.com
-CLOUDFLARE_R2_ACCESS_KEY=your_access_key_here
-CLOUDFLARE_R2_SECRET_KEY=your_secret_key_here
-CLOUDFLARE_R2_BUCKET_NAME=fitness-app-photos
-
-# OpenRouter API (for food photo OCR)
-OPENROUTER_API_KEY=your_openrouter_api_key_here
-
-# Application
-NODE_ENV=development
-PORT=3000
-```
 
 ## 🍽️ Application Features
 
