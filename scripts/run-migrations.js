@@ -46,8 +46,34 @@ async function runMigrations() {
     // Execute schema
     console.log('Creating database tables...');
     await client.query(schema);
-
     console.log('✓ Database schema created successfully');
+
+    // Run seeds (use simple seed for production)
+    const seedPath = path.join(__dirname, '../db/seed-simple.sql');
+    if (fs.existsSync(seedPath)) {
+      console.log('Seeding database with test users...');
+      let seedData = fs.readFileSync(seedPath, 'utf8');
+
+      // Remove psql-specific commands
+      seedData = seedData
+        .split('\n')
+        .filter(line => !line.trim().startsWith('\\'))
+        .join('\n');
+
+      try {
+        await client.query(seedData);
+        console.log('✓ Database seeded successfully');
+        console.log('');
+        console.log('Test users available:');
+        console.log('  📧 user1@example.com / password123');
+        console.log('  📧 user2@example.com / password123');
+      } catch (seedError) {
+        console.log('⚠ Seed failed (users may already exist):', seedError.message);
+      }
+    } else {
+      console.log('⚠ No seed file found, skipping seeds');
+    }
+
     console.log('==========================================');
     console.log('MIGRATION COMPLETED');
     console.log('==========================================');
