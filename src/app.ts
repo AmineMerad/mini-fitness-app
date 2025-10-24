@@ -2,7 +2,10 @@ import dotenv from 'dotenv';
 
 // IMPORTANT: Load environment variables FIRST, before any other imports
 // This ensures DATABASE_URL and other env vars are available when modules initialize
-dotenv.config();
+// In test environment, don't load .env to avoid overriding test environment variables
+if (process.env['NODE_ENV'] !== 'test') {
+  dotenv.config();
+}
 
 import express from 'express';
 import cors from 'cors';
@@ -23,10 +26,10 @@ app.use(helmet({
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
       scriptSrcAttr: ["'unsafe-inline'"], // Allow onclick handlers
-      styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com"],
       imgSrc: ["'self'", "data:", "https:", "blob:"],
       connectSrc: ["'self'", "https://cdn.jsdelivr.net"], // Allow CDN for source maps
-      fontSrc: ["'self'", "https://cdn.jsdelivr.net"],
+      fontSrc: ["'self'", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com"],
       objectSrc: ["'none'"],
       mediaSrc: ["'self'"],
       frameSrc: ["'none'"],

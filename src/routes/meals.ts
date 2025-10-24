@@ -1,5 +1,6 @@
 import { Router, Response } from 'express';
 import multer from 'multer';
+import sharp from 'sharp';
 import { Pool } from 'pg';
 import { authenticateToken, AuthRequest } from '../middleware/auth';
 import { uploadMealPhoto } from '../services/cloudflare';
@@ -106,8 +107,35 @@ router.post(
         return;
       }
 
-      // 5. Upload to Cloudflare R2
-      const uploadResult = await uploadMealPhoto(req.file.buffer, userId);
+      // 5. Compress image before uploading
+      console.log(`Original image size: ${(req.file.buffer.length / 1024 / 1024).toFixed(2)}MB`);
+
+      let compressedBuffer: Buffer;
+      try {
+        compressedBuffer = await sharp(req.file.buffer)
+          .resize(1920, 1920, {
+            fit: 'inside',
+            withoutEnlargement: true
+          })
+          .jpeg({
+            quality: 85,
+            progressive: true
+          })
+          .toBuffer();
+
+        console.log(`Compressed image size: ${(compressedBuffer.length / 1024 / 1024).toFixed(2)}MB`);
+      } catch (compressionError) {
+        console.error('Image compression failed:', compressionError);
+        res.status(500).json({
+          success: false,
+          error: 'Failed to process image',
+          timestamp: new Date().toISOString()
+        });
+        return;
+      }
+
+      // 6. Upload to Cloudflare R2
+      const uploadResult = await uploadMealPhoto(compressedBuffer, userId);
 
       if (!uploadResult.success || !uploadResult.url) {
         res.status(500).json({
@@ -120,7 +148,7 @@ router.post(
 
       const photoUrl = uploadResult.url;
 
-      // 6. Send to OpenRouter OCR for food detection
+      // 7. Send to OpenRouter OCR for food detection
       const ocrResult = await analyzeMealPhoto(photoUrl);
 
       let mealName = 'Unknown Meal';
@@ -146,7 +174,7 @@ router.post(
         }
       }
 
-      // 7. Save to meals table
+      // 8. Save to meals table
       const mealInsertQuery = `
         INSERT INTO meals (user_id, meal_name, meal_type, meal_date, photo_url)
         VALUES ($1, $2, $3, $4, $5)
@@ -164,7 +192,7 @@ router.post(
       const meal = mealResult.rows[0];
       const mealId = meal.id;
 
-      // 8. Save food items to meal_items table
+      // 9. Save food items to meal_items table
       if (foodItems.length > 0) {
         const itemInsertQuery = `
           INSERT INTO meal_items (
@@ -200,7 +228,7 @@ router.post(
         }
       }
 
-      // 9. Return success response
+      // 10. Return success response
       if (ocrResult.success && foodItems.length > 0) {
         res.status(201).json({
           success: true,
