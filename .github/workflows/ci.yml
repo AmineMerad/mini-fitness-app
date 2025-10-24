@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, Test, develop, staging ]
+    branches: [ main, develop ]
   pull_request:
-    branches: [ main, Test, develop, staging ]
+    branches: [ main, develop ]
 
 jobs:
   # Main CI job - Linting, Type Checking, and Testing
