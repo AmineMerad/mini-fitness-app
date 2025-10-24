@@ -7,29 +7,35 @@ const path = require('path');
 const sourceDir = path.join(__dirname, '../src/public');
 const targetDir = path.join(__dirname, '../dist/public');
 
-// Create dist directory if it doesn't exist
-const distDir = path.join(__dirname, '../dist');
-if (!fs.existsSync(distDir)) {
-  fs.mkdirSync(distDir, { recursive: true });
-}
-
 // Copy directory recursively
 function copyRecursiveSync(src, dest) {
-  const exists = fs.existsSync(src);
-  const stats = exists && fs.statSync(src);
-  const isDirectory = exists && stats.isDirectory();
+  // Check if source exists
+  if (!fs.existsSync(src)) {
+    console.error(`Source directory does not exist: ${src}`);
+    process.exit(1);
+  }
 
-  if (isDirectory) {
+  const stats = fs.statSync(src);
+
+  if (stats.isDirectory()) {
+    // Create destination directory if it doesn't exist
     if (!fs.existsSync(dest)) {
       fs.mkdirSync(dest, { recursive: true });
     }
-    fs.readdirSync(src).forEach((childItemName) => {
+
+    // Copy all files and subdirectories
+    fs.readdirSync(src).forEach((item) => {
       copyRecursiveSync(
-        path.join(src, childItemName),
-        path.join(dest, childItemName)
+        path.join(src, item),
+        path.join(dest, item)
       );
     });
   } else {
+    // It's a file, copy it
+    const destDir = path.dirname(dest);
+    if (!fs.existsSync(destDir)) {
+      fs.mkdirSync(destDir, { recursive: true });
+    }
     fs.copyFileSync(src, dest);
   }
 }
