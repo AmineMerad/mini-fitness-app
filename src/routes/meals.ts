@@ -108,10 +108,30 @@ router.post(
       }
 
       // 5. Compress image before uploading
-      console.log(`Original image size: ${(req.file.buffer.length / 1024 / 1024).toFixed(2)}MB`);
+      const originalSizeBytes = req.file.buffer.length;
+      const originalSizeMB = originalSizeBytes / 1024 / 1024;
+
+      console.log('==================================================');
+      console.log('IMAGE COMPRESSION STARTING');
+      console.log('==================================================');
+      console.log(`Original file size: ${originalSizeMB.toFixed(2)}MB (${originalSizeBytes.toLocaleString()} bytes)`);
+      console.log(`Original MIME type: ${req.file.mimetype}`);
 
       let compressedBuffer: Buffer;
+      let compressionMetadata: {
+        originalSizeMB: number;
+        compressedSizeMB: number;
+        savingsPercent: number;
+      };
+
       try {
+        console.log('Compression settings:');
+        console.log('  - Max dimensions: 1920x1920px (maintains aspect ratio)');
+        console.log('  - Format: JPEG');
+        console.log('  - Quality: 85%');
+        console.log('  - Progressive encoding: enabled');
+        console.log('Processing image...');
+
         compressedBuffer = await sharp(req.file.buffer)
           .resize(1920, 1920, {
             fit: 'inside',
@@ -123,9 +143,29 @@ router.post(
           })
           .toBuffer();
 
-        console.log(`Compressed image size: ${(compressedBuffer.length / 1024 / 1024).toFixed(2)}MB`);
+        const compressedSizeBytes = compressedBuffer.length;
+        const compressedSizeMB = compressedSizeBytes / 1024 / 1024;
+        const savingsBytes = originalSizeBytes - compressedSizeBytes;
+        const savingsPercent = ((savingsBytes / originalSizeBytes) * 100);
+
+        compressionMetadata = {
+          originalSizeMB: parseFloat(originalSizeMB.toFixed(2)),
+          compressedSizeMB: parseFloat(compressedSizeMB.toFixed(2)),
+          savingsPercent: parseFloat(savingsPercent.toFixed(1))
+        };
+
+        console.log('--------------------------------------------------');
+        console.log('COMPRESSION COMPLETE');
+        console.log('--------------------------------------------------');
+        console.log(`Compressed file size: ${compressedSizeMB.toFixed(2)}MB (${compressedSizeBytes.toLocaleString()} bytes)`);
+        console.log(`Size reduction: ${savingsBytes.toLocaleString()} bytes (${savingsPercent.toFixed(1)}%)`);
+        console.log(`Compression ratio: ${(originalSizeBytes / compressedSizeBytes).toFixed(2)}x`);
+        console.log('==================================================');
       } catch (compressionError) {
-        console.error('Image compression failed:', compressionError);
+        console.error('==================================================');
+        console.error('IMAGE COMPRESSION FAILED');
+        console.error('==================================================');
+        console.error('Error details:', compressionError);
         res.status(500).json({
           success: false,
           error: 'Failed to process image',
@@ -236,7 +276,8 @@ router.post(
             mealId: mealId,
             photoUrl: photoUrl,
             foods: foodItems,
-            totalCalories: totalCalories
+            totalCalories: totalCalories,
+            compression: compressionMetadata
           },
           timestamp: new Date().toISOString()
         });
@@ -247,7 +288,8 @@ router.post(
           data: {
             mealId: mealId,
             photoUrl: photoUrl,
-            note: 'Calories could not be detected, please review'
+            note: 'Calories could not be detected, please review',
+            compression: compressionMetadata
           },
           timestamp: new Date().toISOString()
         });

@@ -1,8 +1,8 @@
 # Mini Fitness App - Calorie Tracking
 
-A TypeScript Express.js calorie tracking fitness application with PostgreSQL database, meal photo analysis, and leaderboard competitions.
+A TypeScript Express.js calorie tracking fitness application with PostgreSQL database, meal photo analysis .
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Prerequisites
 
