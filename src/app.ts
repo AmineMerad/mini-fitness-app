@@ -44,10 +44,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // Serve static files from public directory
-// In production (compiled), files are in dist/public
-// In development, files are in src/public
-const publicPath = process.env['NODE_ENV'] === 'production' ? 'dist/public' : 'src/public';
-app.use(express.static(publicPath));
+app.use(express.static('src/public'));
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -56,7 +53,7 @@ app.use('/api/dashboard', dashboardRoutes);
 
 // Serve index.html at root
 app.get('/', (_req, res) => {
-  res.sendFile('index.html', { root: publicPath });
+  res.sendFile('index.html', { root: 'src/public' });
 });
 
 app.get('/health', (_req, res) => {
