@@ -4,7 +4,7 @@
   "description": "A fitness tracking application with weight logging and leaderboard features",
   "main": "dist/app.js",
   "scripts": {
-    "build": "tsc && node scripts/copy-public.js",
+    "build": "tsc",
     "start": "node dist/app.js",
     "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
     "test": "NODE_ENV=test jest --runInBand",

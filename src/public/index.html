@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Fitness App - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --success: #10b981;
+            --info: #0ea5e9;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark-bg: #0f172a;
+            --card-bg: #1e293b;
+            --card-border: #334155;
+            --text-primary: #ffffff;
+            --text-secondary: #e2e8f0;
+            --text-muted: #94a3b8;
+        }
+        
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-primary);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            padding: 20px 0;
+        }
+        
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .app-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .app-header h1 {
+            font-weight: 700;
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        
+        .app-header p {
+            color: rgba(255, 255, 255, 0.9);
+            margin: 0.5rem 0 0;
+            font-size: 1.1rem;
+        }
+        
+        .card {
+            margin-bottom: 24px;
+            border: none;
+            border-radius: 12px;
+            background-color: var(--card-bg);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-header {
+            border-bottom: 1px solid var(--card-border);
+            padding: 1rem 1.5rem;
+            border-radius: 12px 12px 0 0 !important;
+            font-weight: 600;
+            color: #ffffff !important;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+            color: var(--text-primary);
+        }
+        
+        .card-header.bg-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%) !important;
+        }
+        
+        .card-header.bg-success {
+            background: linear-gradient(135deg, var(--success) 0%, #0d9c6d 100%) !important;
+        }
+        
+        .card-header.bg-info {
+            background: linear-gradient(135deg, var(--info) 0%, #0b8cc4 100%) !important;
+        }
+        
+        .card-header.bg-warning {
+            background: linear-gradient(135deg, var(--warning) 0%, #d97706 100%) !important;
+            color: #ffffff !important;
+        }
+        
+        .card-header.bg-danger {
+            background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%) !important;
+        }
+        
+        .btn {
+            border-radius: 8px;
+            font-weight: 600;
+            padding: 0.5rem 1.25rem;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border: none;
+            color: #ffffff;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, var(--success) 0%, #0d9c6d 100%);
+            border: none;
+            color: #ffffff;
+        }
+        
+        .btn-info {
+            background: linear-gradient(135deg, var(--info) 0%, #0b8cc4 100%);
+            border: none;
+            color: #ffffff;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning) 0%, #d97706 100%);
+            border: none;
+            color: #ffffff !important;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+            border: none;
+            color: #ffffff;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            color: #ffffff;
+        }
+        
+        .form-control, .form-select {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            color: var(--text-primary);
+            border-radius: 8px;
+            padding: 0.6rem 0.75rem;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            background-color: #1e293b;
+            border-color: var(--primary);
+            color: var(--text-primary);
+            box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.25);
+        }
+        
+        .form-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        .alert {
+            border-radius: 8px;
+            border: none;
+            padding: 1rem 1.25rem;
+            color: #ffffff;
+        }
+        
+        .alert-success {
+            background-color: rgba(16, 185, 129, 0.15);
+            color: #ffffff;
+            border-left: 4px solid var(--success);
+        }
+        
+        .alert-danger {
+            background-color: rgba(239, 68, 68, 0.15);
+            color: #ffffff;
+            border-left: 4px solid var(--danger);
+        }
+        
+        .alert-info {
+            background-color: rgba(14, 165, 233, 0.15);
+            color: #ffffff;
+            border-left: 4px solid var(--info);
+        }
+        
+        .progress {
+            background-color: #334155;
+            border-radius: 10px;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            border-radius: 10px;
+        }
+        
+        .meal-card {
+            border-left: 4px solid var(--primary);
+            margin-bottom: 16px;
+            transition: all 0.2s;
+            color: var(--text-primary);
+        }
+        
+        .meal-card:hover {
+            transform: translateX(4px);
+        }
+        
+        .food-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #334155;
+            color: var(--text-primary);
+        }
+        
+        .food-item:last-child {
+            border-bottom: none;
+        }
+        
+        img.meal-photo {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-top: 10px;
+            border: 1px solid #334155;
+        }
+        
+        .badge {
+            font-weight: 500;
+            padding: 0.35em 0.65em;
+            color: #ffffff;
+        }
+        
+        .table {
+            color: var(--text-primary);
+            border-color: #334155;
+        }
+        
+        .table-striped > tbody > tr:nth-of-type(odd) {
+            --bs-table-accent-bg: rgba(255, 255, 255, 0.05);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+        }
+        
+        .section-icon {
+            margin-right: 8px;
+        }
+        
+        .stats-card {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            color: var(--text-primary);
+        }
+        
+        .stats-card h3 {
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            color: var(--text-primary);
+        }
+        
+        .stats-card h6 {
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+        
+        .stats-card small {
+            color: var(--text-muted);
+        }
+        
+        /* Fix for text visibility in all sections */
+        #dashboardResult, #historyResult, #leaderboardResult {
+            color: var(--text-primary) !important;
+        }
+        
+        #dashboardResult .text-muted, 
+        #historyResult .text-muted, 
+        #leaderboardResult .text-muted {
+            color: var(--text-muted) !important;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .app-header h1 {
+                font-size: 2rem;
+            }
+            
+            .card-body {
+                padding: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="app-header">
+            <h1><i class="fas fa-dumbbell"></i> Fitness Tracker</h1>
+            <p>Track your meals, monitor calories, and compete with friends</p>
+        </div>
+
+        <!-- Login Section -->
+        <div class="card">
+            <div class="card-header bg-primary">
+                <h5 class="mb-0"><i class="fas fa-sign-in-alt section-icon"></i>Login</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="loginEmail" class="form-label">Email</label>
+                            <input type="email" id="loginEmail" class="form-control" placeholder="Enter your email" value="user1@example.com">
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginPassword" class="form-label">Password</label>
+                            <input type="password" id="loginPassword" class="form-control" placeholder="Enter your password" value="password123">
+                        </div>
+                        <button onclick="login()" class="btn btn-primary">
+                            <span id="loginSpinner" class="spinner-border spinner-border-sm hidden" role="status"></span>
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                        <div id="loginResult" class="alert hidden"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Meal Upload Section -->
+        <div class="card">
+            <div class="card-header bg-success">
+                <h5 class="mb-0"><i class="fas fa-camera section-icon"></i>Upload Meal</h5>
+            </div>
+            <div class="card-body">
+                <!-- Info Alert about compression -->
+                <div class="alert alert-info mb-4">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-info-circle me-2" style="font-size: 1.5rem;"></i>
+                        <div>
+                            <strong>Smart Image Optimization</strong>
+                            <p class="mb-0 mt-1">
+                                Your photos are automatically compressed before upload to save bandwidth and storage.
+                                Images are resized to max 1920x1920px and converted to optimized JPEG format (85% quality).
+                                You'll see the before/after stats after upload!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="mealFile" class="form-label">Meal Photo <small class="text-muted">(Max size: 5MB)</small></label>
+                            <input type="file" id="mealFile" class="form-control" accept="image/*">
+                        </div>
+                        <div class="mb-3">
+                            <label for="mealType" class="form-label">Meal Type</label>
+                            <select id="mealType" class="form-control">
+                                <option value="breakfast">Breakfast</option>
+                                <option value="lunch" selected>Lunch</option>
+                                <option value="dinner">Dinner</option>
+                                <option value="snack">Snack</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="mealDate" class="form-label">Date</label>
+                            <input type="date" id="mealDate" class="form-control">
+                        </div>
+                        <button onclick="uploadMeal()" class="btn btn-success">
+                            <span id="uploadSpinner" class="spinner-border spinner-border-sm hidden" role="status"></span>
+                            <i class="fas fa-upload"></i> Upload Meal
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                        <div id="uploadResult" class="alert hidden"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div class="card">
+            <div class="card-header bg-info">
+                <h5 class="mb-0"><i class="fas fa-chart-line section-icon"></i>Daily Dashboard</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <label for="dashboardDate" class="form-label">Select Date</label>
+                        <input type="date" id="dashboardDate" class="form-control">
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button onclick="loadDashboard()" class="btn btn-info">
+                            <span id="dashboardSpinner" class="spinner-border spinner-border-sm hidden" role="status"></span>
+                            <i class="fas fa-sync-alt"></i> Load Dashboard
+                        </button>
+                    </div>
+                </div>
+                <div id="dashboardResult"></div>
+            </div>
+        </div>
+
+        <!-- Meal History Section -->
+        <div class="card">
+            <div class="card-header bg-warning">
+                <h5 class="mb-0"><i class="fas fa-history section-icon"></i>Meal History</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <label for="historyStartDate" class="form-label">Start Date</label>
+                        <input type="date" id="historyStartDate" class="form-control">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="historyEndDate" class="form-label">End Date</label>
+                        <input type="date" id="historyEndDate" class="form-control">
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button onclick="loadHistory()" class="btn btn-warning">
+                            <span id="historySpinner" class="spinner-border spinner-border-sm hidden" role="status"></span>
+                            <i class="fas fa-search"></i> Load History
+                        </button>
+                    </div>
+                </div>
+                <div id="historyResult"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // API Base URL
+        const API_BASE = window.location.origin + '/api';
+
+        // Get JWT token from localStorage
+        function getToken() {
+            return localStorage.getItem('jwt_token');
+        }
+
+        // Set JWT token in localStorage
+        function setToken(token) {
+            localStorage.setItem('jwt_token', token);
+        }
+
+        // Show/hide spinner
+        function toggleSpinner(spinnerId, show) {
+            const spinner = document.getElementById(spinnerId);
+            if (spinner) {
+                spinner.classList.toggle('hidden', !show);
+            }
+        }
+
+        // Show result message
+        function showResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.className = `alert alert-${type}`;
+            element.innerHTML = message;
+            element.classList.remove('hidden');
+        }
+
+        // Hide result message
+        function hideResult(elementId) {
+            const element = document.getElementById(elementId);
+            element.classList.add('hidden');
+        }
+
+        // Generic API call function
+        async function apiCall(method, endpoint, data = null, useFormData = false) {
+            const options = {
+                method: method,
+                headers: {}
+            };
+
+            // Add auth header if token exists
+            const token = getToken();
+            if (token) {
+                options.headers['Authorization'] = `Bearer ${token}`;
+            }
+
+            // Add body for POST/PUT
+            if (data) {
+                if (useFormData) {
+                    options.body = data; // FormData
+                } else {
+                    options.headers['Content-Type'] = 'application/json';
+                    options.body = JSON.stringify(data);
+                }
+            }
+
+            try {
+                const response = await fetch(API_BASE + endpoint, options);
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'Request failed');
+                }
+
+                return result;
+            } catch (error) {
+                throw new Error(error.message || 'Network error');
+            }
+        }
+
+        // Login function
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                showResult('loginResult', 'Please enter email and password', 'danger');
+                return;
+            }
+
+            toggleSpinner('loginSpinner', true);
+            hideResult('loginResult');
+
+            try {
+                const result = await apiCall('POST', '/auth/login', { email, password });
+
+                if (result.success && result.data.token) {
+                    setToken(result.data.token);
+                    showResult('loginResult', `
+                        <strong><i class="fas fa-check-circle"></i> Login Successful!</strong><br>
+                        User ID: ${result.data.userId}<br>
+                        Username: ${result.data.username}<br>
+                        Daily Goal: ${result.data.daily_calorie_goal} calories<br>
+                        Token saved to localStorage
+                    `, 'success');
+                }
+            } catch (error) {
+                showResult('loginResult', `<i class="fas fa-exclamation-circle"></i> Login failed: ${error.message}`, 'danger');
+            } finally {
+                toggleSpinner('loginSpinner', false);
+            }
+        }
+
+        // Upload meal function
+        async function uploadMeal() {
+            const fileInput = document.getElementById('mealFile');
+            const mealType = document.getElementById('mealType').value;
+            const mealDate = document.getElementById('mealDate').value;
+
+            if (!fileInput.files[0]) {
+                showResult('uploadResult', 'Please select a photo', 'danger');
+                return;
+            }
+
+            // Validate file size (5MB = 5 * 1024 * 1024 bytes)
+            const maxSize = 5 * 1024 * 1024;
+            const fileSize = fileInput.files[0].size;
+            if (fileSize > maxSize) {
+                const sizeMB = (fileSize / 1024 / 1024).toFixed(2);
+                showResult('uploadResult', `<i class="fas fa-exclamation-circle"></i> File too large (${sizeMB}MB). Maximum size is 5MB. Please choose a smaller image.`, 'danger');
+                return;
+            }
+
+            if (!getToken()) {
+                showResult('uploadResult', 'Please login first', 'danger');
+                return;
+            }
+
+            toggleSpinner('uploadSpinner', true);
+            hideResult('uploadResult');
+
+            try {
+                const formData = new FormData();
+                formData.append('file', fileInput.files[0]);
+                formData.append('meal_type', mealType);
+                formData.append('meal_date', mealDate);
+
+                const result = await apiCall('POST', '/meals/upload', formData, true);
+
+                if (result.success) {
+                    let html = '<strong><i class="fas fa-check-circle"></i> Meal Uploaded!</strong><br>';
+                    html += `Meal ID: ${result.data.mealId}<br>`;
+
+                    // Show compression information if available
+                    if (result.data.compression) {
+                        const comp = result.data.compression;
+                        const savingsColor = comp.savingsPercent > 50 ? 'success' : (comp.savingsPercent > 25 ? 'warning' : 'info');
+
+                        html += '<hr style="border-color: rgba(255,255,255,0.3); margin: 10px 0;">';
+                        html += '<div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; margin: 10px 0;">';
+                        html += '<strong><i class="fas fa-compress-arrows-alt"></i> Image Compression</strong><br>';
+                        html += `<div class="d-flex justify-content-between mt-2">`;
+                        html += `<span><i class="fas fa-file-image"></i> Original:</span><span><strong>${comp.originalSizeMB} MB</strong></span>`;
+                        html += `</div>`;
+                        html += `<div class="d-flex justify-content-between">`;
+                        html += `<span><i class="fas fa-file-archive"></i> Compressed:</span><span><strong>${comp.compressedSizeMB} MB</strong></span>`;
+                        html += `</div>`;
+                        html += `<div class="d-flex justify-content-between mt-2">`;
+                        html += `<span><i class="fas fa-chart-line"></i> Savings:</span>`;
+                        html += `<span class="badge bg-${savingsColor}"><i class="fas fa-arrow-down"></i> ${comp.savingsPercent}%</span>`;
+                        html += `</div>`;
+                        html += '</div>';
+                        html += '<hr style="border-color: rgba(255,255,255,0.3); margin: 10px 0;">';
+                    }
+
+                    if (result.data.foods && result.data.foods.length > 0) {
+                        html += `<strong>Detected Foods:</strong><br>`;
+                        result.data.foods.forEach(food => {
+                            html += `<i class="fas fa-utensils text-muted me-1"></i> ${food.food_name} - ${food.calories} cal<br>`;
+                        });
+                        html += `<strong>Total: ${result.data.totalCalories} calories</strong>`;
+                    } else if (result.data.note) {
+                        html += `<em>${result.data.note}</em>`;
+                    }
+
+                    showResult('uploadResult', html, 'success');
+                    fileInput.value = ''; // Clear file input
+                }
+            } catch (error) {
+                // Better error message handling
+                const errorMsg = error && error.message ? error.message : 'Unknown error occurred';
+                showResult('uploadResult', `<i class="fas fa-exclamation-circle"></i> Upload failed: ${errorMsg}`, 'danger');
+            } finally {
+                toggleSpinner('uploadSpinner', false);
+            }
+        }
+
+        // Load dashboard function
+        async function loadDashboard() {
+            const date = document.getElementById('dashboardDate').value;
+
+            if (!getToken()) {
+                showResult('dashboardResult', '<div class="alert alert-danger">Please login first</div>');
+                return;
+            }
+
+            toggleSpinner('dashboardSpinner', true);
+            document.getElementById('dashboardResult').innerHTML = '';
+
+            try {
+                const result = await apiCall('GET', `/dashboard?date=${date}`);
+
+                if (result.success) {
+                    const data = result.data;
+                    const progressPercent = Math.min(data.progress_percent, 100);
+                    const progressClass = data.goal_achieved ? 'bg-success' : (progressPercent < 110 ? 'bg-warning' : 'bg-danger');
+
+                    let html = `
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <div class="card stats-card">
+                                    <div class="card-body">
+                                        <h6><i class="fas fa-bullseye"></i> Daily Goal</h6>
+                                        <h3>${data.daily_goal}</h3>
+                                        <small>calories</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card stats-card">
+                                    <div class="card-body">
+                                        <h6><i class="fas fa-fire"></i> Total Consumed</h6>
+                                        <h3>${data.total_calories}</h3>
+                                        <small>calories</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card stats-card">
+                                    <div class="card-body">
+                                        <h6><i class="fas fa-balance-scale"></i> Remaining</h6>
+                                        <h3>${data.remaining_calories}</h3>
+                                        <small>calories</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <h6><i class="fas fa-chart-bar"></i> Progress: ${progressPercent.toFixed(1)}%</h6>
+                            <div class="progress mb-2">
+                                <div class="progress-bar ${progressClass}" role="progressbar"
+                                     style="width: ${progressPercent}%"
+                                     aria-valuenow="${progressPercent}" aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                ${data.goal_achieved ?
+                                    '<span class="badge bg-success"><i class="fas fa-check"></i> On Track!</span>' :
+                                    '<span class="badge bg-danger"><i class="fas fa-exclamation-triangle"></i> Over Goal</span>'}
+                            </div>
+                        </div>
+                        <h6><i class="fas fa-utensils"></i> Meals (${data.meals.length}):</h6>
+                    `;
+
+                    if (data.meals.length === 0) {
+                        html += '<p class="text-muted">No meals logged for this date.</p>';
+                    } else {
+                        data.meals.forEach(meal => {
+                            html += `
+                                <div class="card meal-card">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <strong>${meal.meal_type.charAt(0).toUpperCase() + meal.meal_type.slice(1)}</strong>
+                                            <span class="badge bg-primary">${meal.calories} cal</span>
+                                        </div>
+                                        ${meal.photo_url ? `<img src="${meal.photo_url}" class="meal-photo" alt="Meal photo">` : ''}
+                                        <div class="mt-2">
+                            `;
+
+                            meal.foods.forEach(food => {
+                                html += `
+                                    <div class="food-item">
+                                        <span>${food.food_name}</span>
+                                        <span class="float-end text-muted">${food.calories} cal</span>
+                                    </div>
+                                `;
+                            });
+
+                            html += `
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    }
+
+                    document.getElementById('dashboardResult').innerHTML = html;
+                }
+            } catch (error) {
+                document.getElementById('dashboardResult').innerHTML =
+                    `<div class="alert alert-danger"><i class="fas fa-exclamation-circle"></i> Failed to load dashboard: ${error.message}</div>`;
+            } finally {
+                toggleSpinner('dashboardSpinner', false);
+            }
+        }
+
+        // Load history function
+        async function loadHistory() {
+            const startDate = document.getElementById('historyStartDate').value;
+            const endDate = document.getElementById('historyEndDate').value;
+
+            if (!getToken()) {
+                showResult('historyResult', '<div class="alert alert-danger">Please login first</div>');
+                return;
+            }
+
+            toggleSpinner('historySpinner', true);
+            document.getElementById('historyResult').innerHTML = '';
+
+            try {
+                const result = await apiCall('GET', `/meals/history?startDate=${startDate}&endDate=${endDate}`);
+
+                if (result.success) {
+                    const data = result.data;
+
+                    let html = `<p><strong><i class="fas fa-list"></i> Total Meals: ${data.totalMealsLogged}</strong> (${data.dateRange.start} to ${data.dateRange.end})</p>`;
+
+                    if (data.meals.length === 0) {
+                        html += '<p class="text-muted">No meals found in this date range.</p>';
+                    } else {
+                        data.meals.forEach(meal => {
+                            html += `
+                                <div class="card meal-card">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <div>
+                                                <strong>${meal.date}</strong> -
+                                                <span class="badge bg-secondary">${meal.meal_type}</span>
+                                            </div>
+                                            <span class="badge bg-primary">${meal.totalCalories} cal</span>
+                                        </div>
+                                        <div><em>${meal.meal_name}</em></div>
+                                        ${meal.photo_url ? `<img src="${meal.photo_url}" class="meal-photo" alt="Meal photo">` : ''}
+                                        <div class="mt-2">
+                            `;
+
+                            meal.foods.forEach(food => {
+                                html += `
+                                    <div class="food-item">
+                                        <span>${food.food_name}</span>
+                                        <span class="float-end text-muted">${food.calories} cal</span>
+                                    </div>
+                                `;
+                            });
+
+                            html += `
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    }
+
+                    document.getElementById('historyResult').innerHTML = html;
+                }
+            } catch (error) {
+                document.getElementById('historyResult').innerHTML =
+                    `<div class="alert alert-danger"><i class="fas fa-exclamation-circle"></i> Failed to load history: ${error.message}</div>`;
+            } finally {
+                toggleSpinner('historySpinner', false);
+            }
+        }
+
+        // Set default dates
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('mealDate').valueAsDate = new Date();
+            document.getElementById('dashboardDate').valueAsDate = new Date();
+            document.getElementById('historyEndDate').valueAsDate = new Date();
+            const sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+            document.getElementById('historyStartDate').valueAsDate = sevenDaysAgo;
+        });
+    </script>
+</body>
+</html>

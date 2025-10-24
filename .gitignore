@@ -84,7 +84,7 @@ dist
 
 # Gatsby files
 .cache/
-public
+# public (commented out - we need src/public for our app)
 
 # Storybook build outputs
 .out
